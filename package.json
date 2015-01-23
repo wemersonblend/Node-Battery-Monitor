@@ -1,0 +1,9 @@
+{
+  "version": "0.1.0",
+  "private": false,
+  "dependencies": {
+    "node-battery": "^0.2.2",
+    "node-schedule": "^0.1.15",
+    "winston": "^0.8.3"
+  }
+}

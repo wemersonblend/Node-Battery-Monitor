@@ -1,12 +1,13 @@
-var nodeBattery = require("node-battery");
-var exec = require('child_process').exec;
-var schedule = require('node-schedule');
+var nodeBattery = require("node-battery"),
+	exec 		= require('child_process').exec,
+	schedule 	= require('node-schedule'),
+	growl 		= require('notify-send');
 
 // Generating log file
 var winston = require('winston');
 var logger = new (winston.Logger)({
 	transports: [
-		new winston.transports.File({ 
+		new winston.transports.File({
 			filename: '/var/log/node_battery_monitor.log' ,
 			json: true,
 			maxsize: 5000000
@@ -16,7 +17,7 @@ var logger = new (winston.Logger)({
 			prettyPrint : true
 		})
 
-	] 
+	]
 });
 
 
@@ -31,7 +32,7 @@ rule.second = 1;
 var j = schedule.scheduleJob(rule, function(){
 
 	inspectBattery();
-	
+
 });
 
 function inspectBattery() {
@@ -45,33 +46,32 @@ function inspectBattery() {
 
 			logger.info('Node Battery Monitor - Percent ', percent + '%');
 
-			if (percent <= 12 && !isCharging) {
+			if (percent <= 12 && !isCharging)
 				sleep();
-			}if (percent <= 15 && !isCharging) {
+
+			if (percent <= 40 && !isCharging)
 				alert(percent);
-			} if (percent > 90 && isCharging) { 
+
+			if (percent > 90 && isCharging)
 				charged(percent);
-			} else {
+			else
 				logger.info('Node Battery Monitor - Nothing to Do');
-			}
 		});
 	});
 }
 
 function alert(percent) {
-	var msg = 'bash -c "notify-send \'Node Battery Monitor\' \'Battery is Down!'+percent+'%\'"';
+	var msg = 'Battery is Down! ' + percent + '%';
 
-	exec(msg, function (error, stdout, stderr) {
-		logger.info(msg);
-	});
+	growl.critical.notify('Node Battery Monitor', msg);
+	logger.info(msg);
 }
 
 function charged(percent) {
-	var msg = 'bash -c "notify-send \'Node Battery Monitor\' \'Battery is Charged '+percent+'%\'"';
+	var msg =  'Battery is Charged ' + percent + '%';
 
-	exec(msg, function (error, stdout, stderr) {
-		logger.info(msg);
-	});
+	growl.normal.notify('Node Battery Monitor', msg);
+	logger.info(msg);
 }
 
 function sleep() {

@@ -4,6 +4,7 @@
   "dependencies": {
     "node-battery": "^0.2.2",
     "node-schedule": "^0.1.15",
+    "notify-send": "^0.1.2",
     "winston": "^0.8.3"
   }
 }
